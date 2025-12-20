@@ -204,10 +204,18 @@ function radar_visualization(config) {
     }
 
 
+    // Make SVG responsive using viewBox instead of fixed size
     var svg = d3.select("svg#" + config.svg_id)
         .style("background-color", config.colors.background)
-        .attr("width", config.width)
-        .attr("height", config.height);
+        .attr("viewBox", "0 0 " + config.width + " " + config.height)
+        .attr("preserveAspectRatio", "xMidYMid meet")
+        .style("width", "100%")
+        .style("height", "auto");
+
+    // Collapse legend by default on very small screens
+    if (window.innerWidth <= 480) {
+        svg.classed("legend-collapsed", true);
+    }
 
     var radar = svg.append("g");
     radar.attr("transform", translate(config.width / 2, config.height / 2));
@@ -254,6 +262,7 @@ function radar_visualization(config) {
                 .text(config.rings[i].name)
                 .attr("y", -rings[i].radius + 32)
                 .attr("text-anchor", "middle")
+                .attr("class", "ring-label")
                 .style("fill", config.rings[i].color)
                 .style("opacity", 0.75) //doorzichtigheid van de tekst in de ring
                 .style("text-transform", "uppercase")
@@ -295,7 +304,7 @@ function radar_visualization(config) {
             .text("■ nieuw ▲ verplaatst")
             .attr("xml:space", "preserve")
             .style("font-family", "Raleway")
-            .style("font-size", "10px")
+            .style("font-size", "14px")
             .style("fill", config.colors.text);
 
         // legend
@@ -307,6 +316,7 @@ function radar_visualization(config) {
                     legend_offset[quadrant].y - 45
                 ))
                 .text(config.quadrants[quadrant].name)
+                .attr("class", "legend-quadrant-title")
                 .style("font-family", "Raleway")
                 .style("font-size", "20px")
                 .style("font-weight", "900")
@@ -315,6 +325,7 @@ function radar_visualization(config) {
                 legend.append("text")
                     .attr("transform", legend_transform(quadrant, ring))
                     .text(config.rings[ring].name)
+                    .attr("class", "legend-ring-name")
                     .style("font-family", "Raleway")
                     .style("font-size", "12px")
                     .style("font-weight", "bold")
@@ -342,7 +353,7 @@ function radar_visualization(config) {
                     })
                     .append("text")
                     .attr("transform", function (d, i) { return legend_transform(quadrant, ring, i); })
-                    .attr("class", "legend" + quadrant + ring)
+                    .attr("class", "legend" + quadrant + ring + " legend-item")
                     .attr("id", function (d, i) { return "legendItem" + d.id; })
                     .text(function (d, i) { return d.id + ". " + d.label; })
                     .style("font-family", "Raleway")

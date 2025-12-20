@@ -51,7 +51,7 @@ Kleuren:
 
 <body>
 
-    <div class="center-box">
+    <div class="center-box header-box">
         <a href="https://www.soprasteria.nl/">
             <img src="sopra-steria-logo.svg" alt="Sopra Steria logo">
         </a>
@@ -59,6 +59,7 @@ Kleuren:
     </div>
 
     <svg id="radar" style="display: block; margin: auto"></svg>
+    <div id="mobile-lists" class="mobile-lists"></div>
 
     <script>
         fetch("/versions/versions.json")
@@ -83,7 +84,70 @@ Kleuren:
                     .then(response => response.json())
                     .then(entries => {
                         config.entries = entries;
-                        radar_visualization(config);
+
+                        const MOBILE_BREAK = 640;
+
+                        function renderRadar() {
+                            document.getElementById('mobile-lists').innerHTML = '';
+                            document.getElementById('radar').style.display = '';
+                            // Clear previous SVG content if any
+                            const svg = document.querySelector('#radar');
+                            while (svg.firstChild) svg.removeChild(svg.firstChild);
+                            radar_visualization(config);
+                        }
+
+                        function renderMobileLists() {
+                            const container = document.getElementById('mobile-lists');
+                            container.innerHTML = '';
+
+                            const quadrants = [
+                                'Infrastructuur & Platformen',
+                                'Talen & Frameworks',
+                                'Architectuur & Cultuur',
+                                'Ondersteuning & Tools'
+                            ];
+
+                            const ringClass = ['ring-gebruik', 'ring-probeer', 'ring-onderzoek', 'ring-verminder'];
+
+                            quadrants.forEach((qName, qIndex) => {
+                                const details = document.createElement('details');
+                                const summary = document.createElement('summary');
+                                summary.textContent = qName;
+                                details.appendChild(summary);
+                                const ul = document.createElement('ul');
+                                config.entries
+                                    .filter(e => e.quadrant === qIndex && (e.active ?? true))
+                                    .sort((a, b) => a.ring - b.ring || a.label.localeCompare(b.label))
+                                    .forEach(e => {
+                                        const li = document.createElement('li');
+                                        const link = document.createElement('a');
+                                        link.textContent = e.label;
+                                        link.classList.add(ringClass[e.ring]);
+                                        link.href = e.link ? e.link : '#';
+                                        if (e.link && config.links_in_new_tabs) {
+                                            link.target = '_blank';
+                                        }
+                                        li.appendChild(link);
+                                        ul.appendChild(li);
+                                    });
+                                details.appendChild(ul);
+                                container.appendChild(details);
+                            });
+
+                            // Hide the SVG radar in mobile mode
+                            document.getElementById('radar').style.display = 'none';
+                        }
+
+                        function updateLayout() {
+                            if (window.innerWidth <= MOBILE_BREAK) {
+                                renderMobileLists();
+                            } else {
+                                renderRadar();
+                            }
+                        }
+
+                        updateLayout();
+                        window.addEventListener('resize', updateLayout);
                     });
             });
     </script>

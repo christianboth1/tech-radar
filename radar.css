@@ -13,9 +13,10 @@
 body {
     font-family: 'Raleway';
     padding-top: 10px;
-    padding-bottom: 50px;
+    padding-bottom: 20px;
     background-color: var(--kleur-achtergrond);
     color: var(--kleur-tekst);
+    overflow-x: hidden;
 }
 
 img {
@@ -41,10 +42,183 @@ a {
 .center-box {
     display: flex;
     justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Header-specific alignment: center logo and title vertically */
+.header-box {
     align-items: center;
+    gap: 12px;
+}
+
+/* Ensure logo and title centers align */
+.header-box h1 {
+    margin: 0; /* remove UA default margins that offset centering */
+    line-height: 1.2;
+}
+.header-box img {
+    display: block; /* avoid baseline alignment quirks */
 }
 
 .column {
     width: 640px;
     padding: 0 20px 0 20px;
+}
+
+/* Responsive SVG sizing */
+#radar {
+    display: block;
+    margin: auto;
+    width: 100%;
+    height: auto;
+}
+
+/* Stack columns on small screens */
+@media (max-width: 800px) {
+    .column {
+        width: 100%;
+        padding: 0 16px;
+    }
+
+    .center-box {
+        flex-direction: column;
+    }
+}
+
+/* Mobile-first readability tweaks */
+@media (max-width: 480px) {
+
+    /* Slightly larger ring and quadrant titles */
+    #radar .ring-label {
+        font-size: 22px !important;
+    }
+
+    #radar .legend-quadrant-title {
+        font-size: 22px !important;
+    }
+
+    #radar .legend-ring-name {
+        font-size: 13px !important;
+    }
+
+    /* Collapsible legend: hide items when collapsed */
+    #radar.legend-collapsed .legend-item,
+    #radar.legend-collapsed text[id^="legendItem"] {
+        display: none !important;
+    }
+
+    /* Toggle button visible only on small screens */
+    .legend-toggle-container {
+        display: flex;
+        justify-content: center;
+        margin: 8px 0;
+    }
+
+    .legend-toggle-container button {
+        background: transparent;
+        border: 1px solid var(--kleur-tekst);
+        color: var(--kleur-tekst);
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-family: 'Raleway';
+    }
+}
+
+/* Hidden by default on larger screens */
+.legend-toggle-container {
+    display: none;
+}
+
+/* Ring text colour classes for mobile lists */
+.ring-gebruik {
+    color: var(--kleur-gebruik);
+}
+
+.ring-probeer {
+    color: var(--kleur-probeer);
+}
+
+.ring-onderzoek {
+    color: var(--kleur-onderzoek);
+}
+
+.ring-verminder {
+    color: var(--kleur-verminder);
+}
+
+/* Mobile list container */
+.mobile-lists {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: none;
+}
+
+.mobile-lists details {
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+    margin: 8px 0;
+    background: transparent;
+}
+
+.mobile-lists summary {
+    cursor: pointer;
+    font-weight: 900;
+    font-size: 18px;
+    color: var(--kleur-tekst);
+    padding: 12px;
+    list-style: none;
+}
+
+.mobile-lists summary::-webkit-details-marker {
+    display: none;
+}
+
+.mobile-lists ul {
+    margin: 0;
+    padding: 8px 16px 16px;
+    list-style: none;
+}
+
+.mobile-lists li {
+    margin: 8px 0;
+    display: inline-block;
+    width: 100%;
+}
+
+.mobile-lists a {
+    display: block;
+    padding: 4px 0;
+    text-decoration: none;
+}
+
+.mobile-lists a:hover {
+    text-decoration: underline;
+}
+
+/* Switch to list view on phones */
+@media (max-width: 640px) {
+    #radar {
+        display: none !important;
+    }
+
+    .mobile-lists {
+        display: block;
+    }
+}
+
+/* Ensure full radar fits on larger screens */
+@media (min-width: 641px) {
+    #radar {
+        width: 100% !important;
+        height: auto !important;
+        max-height: calc(100vh - 140px);
+        /* scale responsively while fitting in viewport */
+    }
+
+    .mobile-lists {
+        display: none;
+    }
 }
